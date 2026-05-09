@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Jobs •CareerSense AI{% endblock %}
+{% block content %}
+  <section class="glass-card p-4 p-md-5 mb-4">
+    <div class="row align-items-center g-4">
+      <div class="col-12 col-lg-7">
+        <h1 class="display-6 fw-bold mb-2">Find your next role faster.</h1>
+        <p class="muted mb-0">
+          Search jobs, filter by location/year/month, and get ML-powered recommendations based on similar postings.
+        </p>
+      </div>
+      <div class="col-12 col-lg-5">
+        <div class="glass-card p-3">
+          <div class="d-flex gap-2 align-items-center">
+            <i class="bi bi-stars fs-4"></i>
+            <div>
+              <div class="fw-semibold">Recommendations</div>
+              <div class="small muted">Type a job title to get similar jobs instantly.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-3">
+      <div class="glass-card p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="fw-semibold">Filters</div>
+          <a class="small link-light link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'all_jobs' %}">Reset</a>
+        </div>
+        <form method="get" class="vstack gap-3">
+          <div>
+            <label class="form-label small muted">Location</label>
+            <select class="form-select" name="location">
+              <option value="">Any</option>
+              {% for loc in locations %}
+                <option value="{{ loc }}" {% if filters.Location == loc %}selected{% endif %}>{{ loc }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="form-label small muted">Year</label>
+            <select class="form-select" name="year">
+              <option value="">Any</option>
+              {% for y in years %}
+                <option value="{{ y }}" {% if filters.Year == y|stringformat:'s' %}selected{% endif %}>{{ y }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="form-label small muted">Month</label>
+            <select class="form-select" name="month">
+              <option value="">Any</option>
+              {% for m in months %}
+                <option value="{{ m }}" {% if filters.Month == m|stringformat:'s' %}selected{% endif %}>{{ m }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="form-label small muted">IT</label>
+            <select class="form-select" name="it">
+              <option value="">Any</option>
+              {% for itval in its %}
+                <option value="{{ itval }}" {% if filters.IT == itval %}selected{% endif %}>{{ itval }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button class="btn btn-primary w-100" type="submit">
+            <i class="bi bi-funnel me-1"></i> Apply
+          </button>
+        </form>
+      </div>
+
+      {% if featured_jobs %}
+        <div class="glass-card p-4 mt-4">
+          <div class="fw-semibold mb-3">Featured jobs</div>
+          <div class="vstack gap-2">
+            {% for j in featured_jobs %}
+              <a class="text-decoration-none text-white job-card glass-card p-3" href="{% url 'job_detail' j.id %}">
+                <div class="fw-semibold">{{ j.Title }}</div>
+                <div class="small muted">{{ j.Company|default:"Company not specified" }}</div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="col-12 col-lg-6">
+      {% if matched_title %}
+        <div class="alert alert-success">Showing recommendations for: <strong>{{ matched_title }}</strong></div>
+      {% endif %}
+      {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+      {% endif %}
+
+      <div class="vstack gap-3">
+        {% for job in jobs_page %}
+          <div class="glass-card p-4 job-card">
+            <div class="d-flex justify-content-between gap-3">
+              <div>
+                <a class="text-decoration-none text-white" href="{% url 'job_detail' job.id %}">
+                  <div class="fw-semibold fs-5">{{ job.Title }}</div>
+                </a>
+                <div class="muted">{{ job.Company|default:"Company not specified" }}</div>
+                <div class="d-flex flex-wrap gap-2 mt-2 small">
+                  {% if job.Location %}<span class="badge badge-soft"><i class="bi bi-geo-alt me-1"></i>{{ job.Location }}</span>{% endif %}
+                  {% if job.Year %}<span class="badge badge-soft"><i class="bi bi-calendar3 me-1"></i>{{ job.Year }}</span>{% endif %}
+                  {% if job.Month %}<span class="badge badge-soft">Month: {{ job.Month }}</span>{% endif %}
+                  <span class="badge badge-soft">{% if job.IT %}IT{% else %}Non‑IT{% endif %}</span>
+                </div>
+              </div>
+              {% if user.is_authenticated %}
+                <form method="post" action="{% url 'bookmark_toggle' job.id %}">
+                  {% csrf_token %}
+                  <button class="btn btn-sm {% if job.id in bookmarked_ids %}btn-warning{% else %}btn-outline-light{% endif %}" type="submit" title="Save job">
+                    <i class="bi {% if job.id in bookmarked_ids %}bi-bookmark-star-fill{% else %}bi-bookmark{% endif %}"></i>
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
+        {% empty %}
+          <div class="glass-card p-4">
+            <div class="fw-semibold">No jobs found</div>
+            <div class="muted small">Try adjusting filters or searching by a different title.</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if page_obj and page_obj.paginator.num_pages > 1 %}
+        <nav class="mt-4">
+          <ul class="pagination pagination-sm justify-content-center">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?{% for k,v in query_params.items %}{% if k != 'page' %}{{ k }}={{ v|urlencode }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">Prev</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">Prev</span></li>
+            {% endif %}
+
+            <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?{% for k,v in query_params.items %}{% if k != 'page' %}{{ k }}={{ v|urlencode }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">Next</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+    </div>
+
+    <div class="col-12 col-lg-3">
+      <div class="glass-card p-4">
+        <div class="fw-semibold mb-3">Featured companies</div>
+        <div class="row g-2">
+          {% for c in featured_companies %}
+            <div class="col-6">
+              <div class="glass-card p-3 text-center small">
+                <div class="fw-semibold">{{ c }}</div>
+                <div class="muted">Hiring</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if recent_jobs %}
+        <div class="glass-card p-4 mt-4">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="fw-semibold">Recently viewed</div>
+            <a class="small link-light link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'recent' %}">View all</a>
+          </div>
+          <div class="vstack gap-2">
+            {% for j in recent_jobs %}
+              <a class="text-decoration-none text-white job-card glass-card p-3" href="{% url 'job_detail' j.id %}">
+                <div class="fw-semibold">{{ j.Title }}</div>
+                <div class="small muted">{{ j.Company|default:"Company not specified" }}</div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

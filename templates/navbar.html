@@ -1,0 +1,83 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top border-bottom border-white border-opacity-10">
+  <div class="container-xxl">
+    <a class="navbar-brand d-flex align-items-center gap-3" href="{% url 'all_jobs' %}">
+
+    <div class="logo-icon">
+        <i class="bi bi-cpu-fill"></i>
+    </div>
+
+    <div class="brand-content">
+        <div class="brand-title">CareerSense AI</div>
+        <div class="brand-subtitle">
+            Smart Job Recommendation Platform
+        </div>
+    </div>
+
+</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarMain">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'all_jobs' %}active{% endif %}" href="{% url 'all_jobs' %}">Jobs</a>
+        </li>
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'bookmarks' %}active{% endif %}" href="{% url 'bookmarks' %}">Saved</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'recent' %}active{% endif %}" href="{% url 'recent' %}">Recent</a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <form class="d-flex gap-2 me-lg-3 mt-3 mt-lg-0" method="post" action="{% url 'job_recommendation' %}">
+        {% csrf_token %}
+        <div class="position-relative w-100" style="min-width: 280px;">
+          <input
+            class="form-control form-control-sm app-search"
+            name="job_title"
+            id="job_title"
+            type="search"
+            placeholder="Search job titles…"
+            autocomplete="off"
+            data-suggest-url="{% url 'search_suggestions' %}"
+          />
+          <div id="suggestions" class="list-group position-absolute w-100 shadow-sm d-none" style="top: 110%; z-index: 1080;"></div>
+        </div>
+        <button class="btn btn-sm btn-primary px-3" type="submit">
+          <i class="bi bi-search me-1"></i> Search
+        </button>
+      </form>
+
+      <ul class="navbar-nav ms-auto align-items-lg-center">
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img class="avatar" src="{% if nav_profile and nav_profile.photo %}{{ nav_profile.photo.url }}{% else %}{% static 'img/avatar.svg' %}{% endif %}" alt="avatar" />
+              <span class="d-none d-lg-inline">{{ user.first_name|default:user.username }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'profile_update' %}"><i class="bi bi-pencil-square me-2"></i>Edit profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="post" action="{% url 'logout' %}" class="px-2">
+                  {% csrf_token %}
+                  <button class="btn btn-sm btn-outline-danger w-100" type="submit">Logout</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+          <li class="nav-item"><a class="btn btn-sm btn-outline-light ms-lg-2" href="{% url 'signup' %}">Create account</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+

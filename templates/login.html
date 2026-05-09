@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Login • CareerSense AI{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-7 col-lg-5">
+      <div class="glass-card p-4 p-md-5">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h1 class="h4 mb-0">Welcome back</h1>
+          <span class="badge badge-soft rounded-pill">Secure login</span>
+        </div>
+        <p class="muted mb-4">Login to save jobs, see recommendations, and manage your profile.</p>
+
+        {% if form.errors %}
+          <div class="alert alert-danger">Invalid username or password.</div>
+        {% endif %}
+
+        <form method="post" class="vstack gap-3">
+          {% csrf_token %}
+          <div>
+            <label class="form-label" for="id_username">Username</label>
+            <input class="form-control" type="text" name="username" autofocus required id="id_username" value="{{ form.username.value|default:'' }}">
+          </div>
+          <div>
+            <label class="form-label" for="id_password">Password</label>
+            <input class="form-control" type="password" name="password" required id="id_password">
+          </div>
+          <button class="btn btn-primary w-100" type="submit">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Login
+          </button>
+        </form>
+
+        <div class="d-flex justify-content-between mt-4 small">
+          <a class="link-light link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'signup' %}">Create an account</a>
+          <a class="link-light link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'all_jobs' %}">Back to jobs</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

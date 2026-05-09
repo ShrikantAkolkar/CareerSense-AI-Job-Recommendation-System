@@ -1,0 +1,121 @@
+:root{
+  --app-bg: #0b1220;
+  --card-bg: rgba(255,255,255,.06);
+  --card-border: rgba(255,255,255,.10);
+}
+
+html,body{
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.bg-app{
+  background: radial-gradient(1200px 600px at 15% 10%, rgba(13,110,253,.25), transparent 55%),
+              radial-gradient(900px 500px at 90% 20%, rgba(111,66,193,.20), transparent 55%),
+              radial-gradient(900px 500px at 30% 95%, rgba(32,201,151,.12), transparent 55%),
+              var(--app-bg);
+  color: rgba(255,255,255,.92);
+  min-height: 100vh;
+}
+
+.app-navbar{
+  background: rgba(0,0,0,.25);
+  backdrop-filter: blur(14px);
+}
+
+.brand-mark{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background: linear-gradient(135deg, #0d6efd, #6f42c1);
+  font-weight:800;
+}
+.brand-text{ font-weight:700; letter-spacing:.2px; }
+
+.glass-card{
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
+
+.app-search{
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.18);
+  color: rgba(255,255,255,.92);
+}
+.app-search::placeholder{ color: rgba(255,255,255,.65); }
+.app-search:focus{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(13,110,253,.55);
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.25);
+  color: #fff;
+}
+
+.avatar{
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,.25);
+}
+
+.job-card{
+  transition: transform .15s ease, border-color .15s ease, background .15s ease;
+}
+.job-card:hover{
+  transform: translateY(-2px);
+  border-color: rgba(13,110,253,.45);
+  background: rgba(255,255,255,.075);
+}
+
+.badge-soft{
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.85);
+}
+
+.muted{
+  color: rgba(255,255,255,.75);
+}
+.logo-icon{
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+
+    border-radius: 12px;
+    background: linear-gradient(135deg,#4f46e5,#06b6d4);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font-size: 18px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.brand-content{
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.brand-title{
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+}
+
+.brand-subtitle{
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 2px;
+}
+
+.navbar-brand{
+    text-decoration: none;
+}

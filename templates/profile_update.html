@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Edit profile • CareerSense AI{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-9">
+      <div class="glass-card p-4 p-md-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h1 class="h4 mb-1">Edit profile</h1>
+            <div class="muted small">Update your details and profile photo.</div>
+          </div>
+          <a class="btn btn-sm btn-outline-light" href="{% url 'profile' %}">
+            <i class="bi bi-arrow-left me-1"></i> Back
+          </a>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="glass-card p-3">
+              <div class="text-center">
+                <img
+                  class="rounded-circle border border-white border-opacity-25"
+                  style="width: 120px; height: 120px; object-fit: cover;"
+                  src="{% if profile.photo %}{{ profile.photo.url }}{% else %}{% static 'img/avatar.svg' %}{% endif %}"
+                  alt="Profile photo"
+                />
+                <div class="mt-3">
+                  <div class="fw-semibold">{{ request.user.get_full_name|default:request.user.username }}</div>
+                  <div class="small muted">{{ request.user.email|default:"No email set" }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-8">
+            <form method="post" enctype="multipart/form-data" class="vstack gap-3">
+              {% csrf_token %}
+
+              {% if user_form.non_field_errors %}
+                <div class="alert alert-danger">{{ user_form.non_field_errors }}</div>
+              {% endif %}
+              {% if profile_form.non_field_errors %}
+                <div class="alert alert-danger">{{ profile_form.non_field_errors }}</div>
+              {% endif %}
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ user_form.first_name.id_for_label }}">First name</label>
+                  {{ user_form.first_name }}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ user_form.last_name.id_for_label }}">Last name</label>
+                  {{ user_form.last_name }}
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label" for="{{ user_form.email.id_for_label }}">Email</label>
+                {{ user_form.email }}
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ profile_form.phone.id_for_label }}">Phone</label>
+                  {{ profile_form.phone }}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ profile_form.photo.id_for_label }}">Profile photo</label>
+                  {{ profile_form.photo }}
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label" for="{{ profile_form.bio.id_for_label }}">Bio</label>
+                {{ profile_form.bio }}
+              </div>
+
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="submit">
+                  <i class="bi bi-check2-circle me-1"></i> Save changes
+                </button>
+                <a class="btn btn-outline-light" href="{% url 'profile' %}">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

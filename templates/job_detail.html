@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}{{ job.Title }} • Smart Job Listing{% endblock %}
+{% block content %}
+  <div class="row g-4">
+    <div class="col-12 col-lg-8">
+      <div class="glass-card p-4 p-md-5">
+        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+          <div>
+            <a class="link-light link-underline-opacity-0 link-underline-opacity-75-hover small" href="{% url 'all_jobs' %}">
+              <i class="bi bi-arrow-left me-1"></i> Back to jobs
+            </a>
+            <h1 class="h4 mt-2 mb-1">{{ job.Title }}</h1>
+            <div class="muted">{{ job.Company|default:"Company not specified" }}</div>
+          </div>
+
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'bookmark_toggle' job.id %}">
+              {% csrf_token %}
+              <button class="btn btn-sm {% if is_bookmarked %}btn-warning{% else %}btn-outline-light{% endif %}" type="submit">
+                <i class="bi {% if is_bookmarked %}bi-bookmark-star-fill{% else %}bi-bookmark{% endif %} me-1"></i>
+                {% if is_bookmarked %}Saved{% else %}Save{% endif %}
+              </button>
+            </form>
+          {% endif %}
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          {% if job.Location %}<span class="badge badge-soft"><i class="bi bi-geo-alt me-1"></i>{{ job.Location }}</span>{% endif %}
+          {% if job.Year %}<span class="badge badge-soft"><i class="bi bi-calendar3 me-1"></i>{{ job.Year }}</span>{% endif %}
+          {% if job.Month %}<span class="badge badge-soft">Month: {{ job.Month }}</span>{% endif %}
+          <span class="badge badge-soft">{% if job.IT %}IT{% else %}Non‑IT{% endif %}</span>
+        </div>
+
+        <div class="row g-3">
+          {% if job.JobDescription %}
+            <div class="col-12">
+              <div class="glass-card p-3">
+                <div class="fw-semibold mb-2">Description</div>
+                <div class="muted">{{ job.JobDescription|linebreaksbr }}</div>
+              </div>
+            </div>
+          {% endif %}
+          {% if job.JobRequirment %}
+            <div class="col-12">
+              <div class="glass-card p-3">
+                <div class="fw-semibold mb-2">Requirements</div>
+                <div class="muted">{{ job.JobRequirment|linebreaksbr }}</div>
+              </div>
+            </div>
+          {% endif %}
+          {% if job.RequiredQual %}
+            <div class="col-12">
+              <div class="glass-card p-3">
+                <div class="fw-semibold mb-2">Qualifications</div>
+                <div class="muted">{{ job.RequiredQual|linebreaksbr }}</div>
+              </div>
+            </div>
+          {% endif %}
+          {% if job.tags %}
+            <div class="col-12">
+              <div class="glass-card p-3">
+                <div class="fw-semibold mb-2">Tags</div>
+                <div class="muted">{{ job.tags }}</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="glass-card p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="fw-semibold">Recommended jobs</div>
+          <span class="badge badge-soft">Top 5</span>
+        </div>
+        <div class="vstack gap-2">
+          {% for rec in recommended_jobs %}
+            <a class="glass-card p-3 text-decoration-none text-white job-card" href="{% url 'job_detail' rec.id %}">
+              <div class="fw-semibold">{{ rec.Title }}</div>
+              <div class="small muted">{{ rec.Company|default:"Company not specified" }}</div>
+              <div class="small muted mt-1">
+                {% if rec.Location %}<i class="bi bi-geo-alt me-1"></i>{{ rec.Location }}{% endif %}
+              </div>
+            </a>
+          {% empty %}
+            <div class="muted">No recommendations found yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

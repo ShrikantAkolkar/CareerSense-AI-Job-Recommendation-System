@@ -1,0 +1,4 @@
+django>=5.2,<6
+pandas>=2.0,<3
+Pillow>=10.0,<12
+scikit-learn>=1.4,<2
