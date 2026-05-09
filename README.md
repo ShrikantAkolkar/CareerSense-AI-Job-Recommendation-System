@@ -1,11 +1,4 @@
-Your README is already strong 🔥
-But it feels a little “AI generated / robotic”.
-For GitHub + recruiters, a more human and developer-focused README looks better.
-
-You can replace your current content with this improved version 👇
-
-````md
-# 🚀 CareerSense AI — Intelligent Job Recommendation System
+# 🚀 CareerSense AI — Job Recommendation System
 
 <p align="center">
 
